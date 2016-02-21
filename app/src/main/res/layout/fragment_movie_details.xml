@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/black">
 
     <ScrollView
@@ -23,7 +24,6 @@
                 android:id="@+id/backdrop"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/backPosterHieght"
-                android:contentDescription="@string/backPosterContent"
                 tools:background="#FFFFFF"
                 />
 
@@ -34,7 +34,6 @@
                 android:layout_marginLeft="@dimen/margin_large"
                 android:layout_marginStart="@dimen/margin_large"
                 android:layout_marginTop="@dimen/details_poster_margin_top"
-                android:contentDescription="@string/moviePostercontent"
                 tools:background="#FFFFFF"
                 />
 
@@ -43,6 +42,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/backdrop"
+                android:ellipsize="end"
+                android:maxLines="2"
                 android:layout_marginEnd="@dimen/margin_large"
                 android:layout_marginLeft="@dimen/margin_large"
                 android:layout_marginRight="@dimen/margin_large"
@@ -51,10 +52,8 @@
                 android:layout_toEndOf="@id/poster"
                 android:textColor="@color/TextColorSplash"
                 android:layout_toRightOf="@id/poster"
-                android:ellipsize="end"
-                android:maxLines="2"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                tools:text="The Hunger Games: Mockingjay - Part 2"
+                tools:text="The Don"
                 />
 
             <TextView
@@ -67,7 +66,6 @@
                 android:layout_marginRight="@dimen/margin_default"
                 android:layout_marginStart="@dimen/margin_large"
                 android:layout_marginTop="2dp"
-
                 android:textColor="@color/TextColorSplash"
                 android:layout_toEndOf="@id/poster"
                 android:layout_toRightOf="@id/poster"
@@ -123,7 +121,7 @@
                 android:layout_marginTop="@dimen/margin_large"
                 android:lineSpacingMultiplier="@dimen/body_text_line_spacing"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                tools:text="With the nation of Panem in a full scale war, Katniss confronts President Snow in the final showdown. Teamed with a group of her closest friends – including Gale, Finnick, and Peeta – Katniss goes off on a mission with the unit from District 13 as they risk their lives to stage an assassination attempt on President Snow who has become increasingly obsessed with destroying her. The mortal traps, enemies, and moral choices that await Katniss will challenge her more than any arena she faced in The Hunger Games."
+                tools:text=" The Overview of movie"
                 />
         </RelativeLayout>
     </ScrollView>

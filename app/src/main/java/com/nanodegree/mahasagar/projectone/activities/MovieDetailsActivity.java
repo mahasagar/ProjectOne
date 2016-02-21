@@ -20,11 +20,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_moviedetails);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMovieDetails);
-        setSupportActionBar(toolbar);
         Intent intent = getIntent();
         Movie movie =(Movie)intent.getSerializableExtra("Movie");
-//        getActionBar().setTitle(movie.getTitle().toString());
         if (savedInstanceState == null) {
             Fragment detailsFragment = MovieDetailsActivityFragment.newInstance(movie, this);
             getSupportFragmentManager()

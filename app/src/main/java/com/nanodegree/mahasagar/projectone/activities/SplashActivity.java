@@ -16,8 +16,6 @@ import com.nanodegree.mahasagar.projectone.R;
  */
 public class SplashActivity extends Activity {
     private Thread splashThread;
-    private static String TAG="SplashActivity";
-    private static String mDebugTag = "SplashActivity";
     private Context mContext;
 
     @Override

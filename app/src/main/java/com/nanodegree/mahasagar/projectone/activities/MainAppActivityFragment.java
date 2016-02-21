@@ -15,13 +15,13 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.nanodegree.mahasagar.projectone.common.Constants;
 import com.nanodegree.mahasagar.projectone.model.Movie;
 import com.nanodegree.mahasagar.projectone.adapters.MoviesAdapter;
 import com.nanodegree.mahasagar.projectone.utilities.MyApplication;
@@ -36,13 +36,15 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class MainAppActivityFragment extends Fragment  {
 
     private List<Movie> movieList = new ArrayList<>();
-    private RecyclerView recyclerView;
+
+    @Bind(R.id.recycler_view) RecyclerView recyclerView;
     private MoviesAdapter mAdapter;
-    String URL_POPULARITY = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=382b15ec50c5e60faff2089c899e2448#results/7";
-    String URL_VOTES="http://api.themoviedb.org/3/discover/movie?sort_by=vote_count.desc&api_key=382b15ec50c5e60faff2089c899e2448#results/7";
 
     RequestQueue requestQueue;
     public MainAppActivityFragment() {
@@ -56,8 +58,8 @@ public class MainAppActivityFragment extends Fragment  {
         View view =  inflater.inflate(R.layout.fragment_main_app, container, false);
         setHasOptionsMenu(true);
         requestQueue = VolleySingleton.getInstance().getREquestQueue();
+        ButterKnife.bind(this, view);
 
-        recyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
         mAdapter = new MoviesAdapter(movieList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -76,10 +78,8 @@ public class MainAppActivityFragment extends Fragment  {
             @Override
             public void onClick(View view, int position) {
                 Movie movie = movieList.get(position);
-                //Toast.makeText(getActivity().getApplicationContext(), movie.getTitle() + " is selected!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
                 intent.putExtra("Movie", movie);
-
                 startActivity(intent);
             }
 
@@ -88,7 +88,7 @@ public class MainAppActivityFragment extends Fragment  {
 
             }
         }));
-        prepareMovieData(URL_POPULARITY);
+        prepareMovieData(Constants.URL_POPULARITY);
         return view;
 
     }
@@ -98,10 +98,10 @@ public class MainAppActivityFragment extends Fragment  {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.sort_highest_rated:
-                prepareMovieData(URL_VOTES);
+                prepareMovieData(Constants.URL_VOTES);
                 return true;
             case R.id.sort_most_popular:
-                prepareMovieData(URL_POPULARITY);
+                prepareMovieData(Constants.URL_POPULARITY);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -109,41 +109,31 @@ public class MainAppActivityFragment extends Fragment  {
 
 
     private void prepareMovieData(String Url) {
-        final String img_url = "http://image.tmdb.org/t/p/w500/";
+
         movieList.clear();
-
-        Toast.makeText(getActivity().getApplicationContext(), "Url :" + Url, Toast.LENGTH_SHORT).show();
-
         StringRequest reqList2 = new StringRequest(com.android.volley.Request.Method.GET, Url,new
                 Response.Listener<String>(){
 
                     @Override
                     public void onResponse(String response) {
                         // TODO Auto-generated method stub
-                        // Toast.makeText(getActivity(), "Response"+response,
-                        //       Toast.LENGTH_SHORT).show();
                         try {
-
-                            Log.d("response",response.toString());
-
-                            JSONObject jsono = new JSONObject(response);
-                            JSONArray jarray = jsono.getJSONArray("results");
+                            JSONArray jarray = new JSONObject(response).getJSONArray("results");
                             Movie movie = null;
                             for (int i = 0; i < jarray.length(); i++) {
 
                                 JSONObject object = jarray.getJSONObject(i);
                                 String original_title = object.getString("original_title").toString();
-                                String poster_path = img_url + object.getString("poster_path");
+                                String poster_path = Constants.IMG_URL + object.getString("poster_path");
                                 String overview =  object.getString("overview").toString();
                                 String vote_average =  object.getString("vote_average").toString();
                                 String release_date = object.getString("release_date").toString();
-                                String backdrop_path = img_url +  object.getString("backdrop_path").toString();
+                                String backdrop_path = Constants.IMG_URL +  object.getString("backdrop_path").toString();
 
                                 movie = new Movie(original_title, overview, vote_average,release_date,poster_path,backdrop_path);
                                 movieList.add(movie);
 
                             }
-                            Toast.makeText(getActivity().getApplicationContext(), "movieList.size() :"+ movieList.size(), Toast.LENGTH_SHORT).show();
                             recyclerView.setAdapter(mAdapter);
                         }catch(Exception e){
 
@@ -155,9 +145,6 @@ public class MainAppActivityFragment extends Fragment  {
             @Override
             public void onErrorResponse(VolleyError error) {
                 // TODO Auto-generated method stub
-                Log.d("error",error.toString());
-                Toast.makeText(getActivity(), "Errorr..!!"+error.toString(),
-                        Toast.LENGTH_SHORT).show();
             }
 
         });

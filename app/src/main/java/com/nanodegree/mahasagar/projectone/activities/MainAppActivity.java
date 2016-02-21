@@ -8,8 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
-
 import com.nanodegree.mahasagar.projectone.R;
 
 public class MainAppActivity extends AppCompatActivity {
