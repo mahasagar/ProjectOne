@@ -14,9 +14,4 @@
         android:title="@string/sort_highest_rated"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/show_only_fav"
-        android:orderInCategory="100"
-        android:title="@string/show_only_fav"
-        app:showAsAction="never" />
 </menu>

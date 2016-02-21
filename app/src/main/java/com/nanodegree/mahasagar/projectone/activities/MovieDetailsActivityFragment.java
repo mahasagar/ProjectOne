@@ -19,15 +19,12 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 
-/**
- * Created by sagar on 7/2/16.
- */
 public class MovieDetailsActivityFragment extends Fragment {
 
     Activity activity;
     static Movie movieDetails;
-    TextView original_title,overview,release_date,vote_average;
-    ImageView poster_path;
+    TextView title,overview,release_date,rating;
+    ImageView poster,backdrop;
 
     @Bind(R.id.toolbar) Toolbar mToolbar;
 
@@ -46,26 +43,25 @@ public class MovieDetailsActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view =  inflater.inflate(R.layout.fragment_movie_details, container, false);
-        setHasOptionsMenu(true);
         Intent intent = getActivity().getIntent();
         Movie movie =(Movie)intent.getSerializableExtra("Movie");
 
-//        mToolbar = (Toolbar)view.findViewById(R.id.toolbarMovieDetails);
-//        getActivity().setActionBar(mToolbar);
+        title = (TextView)view.findViewById(R.id.title);
+        poster = (ImageView)view.findViewById(R.id.poster);
+        backdrop = (ImageView)view.findViewById(R.id.backdrop);
+        overview = (TextView)view.findViewById(R.id.overview);
+        rating = (TextView)view.findViewById(R.id.rating);
+        release_date = (TextView)view.findViewById(R.id.release_date);
 
-        getActivity().getActionBar().setTitle(movie.getTitle().toString());
-//        original_title = (TextView)view.findViewById(R.id.original_title);
-//        poster_path = (ImageView)view.findViewById(R.id.poster_path);
-//        overview = (TextView)view.findViewById(R.id.overview);
-//        vote_average = (TextView)view.findViewById(R.id.vote_average);
-//        release_date = (TextView)view.findViewById(R.id.release_date);
-//
-//        original_title.setText(movie.getTitle().toString());
-//        release_date.setText(movie.getRelease_date().toString());
-//        overview.setText(movie.getOverview().toString());
-//        vote_average.setText(movie.getVote_average().toString());
-//
-//        Picasso.with(view.getContext()).load(movie.getImg()).into(poster_path);
+        Log.d("movie.getImg()",movie.getImg());
+        Log.d("movie.getImg()",movie.getBackdrop_path());
+        title.setText(movie.getTitle().toString());
+        release_date.setText(movie.getRelease_date().toString());
+        overview.setText(movie.getOverview().toString());
+        rating.setText(movie.getVote_average().toString()+"/");
+        Picasso.with(view.getContext()).load(movie.getImg()).into(poster);
+        Picasso.with(view.getContext()).load(movie.getBackdrop_path()).into(backdrop);
+
 //        Toast.makeText(view.getContext(), "movie is :"+movieDetails.getOverview(), Toast.LENGTH_SHORT).show();
 
         return view;

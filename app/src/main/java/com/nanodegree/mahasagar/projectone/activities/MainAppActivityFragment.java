@@ -36,9 +36,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class MainAppActivityFragment extends Fragment  {
 
     private List<Movie> movieList = new ArrayList<>();
@@ -106,11 +103,6 @@ public class MainAppActivityFragment extends Fragment  {
             case R.id.sort_most_popular:
                 prepareMovieData(URL_POPULARITY);
                 return true;
-            case R.id.show_only_fav : {
-                  Toast.makeText(getActivity().getApplicationContext(), "Fav Movie is selected!", Toast.LENGTH_SHORT).show();
-                prepareMovieData("");
-                return true;
-            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -128,8 +120,8 @@ public class MainAppActivityFragment extends Fragment  {
                     @Override
                     public void onResponse(String response) {
                         // TODO Auto-generated method stub
-                       // Toast.makeText(getActivity(), "Response"+response,
-                         //       Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(getActivity(), "Response"+response,
+                        //       Toast.LENGTH_SHORT).show();
                         try {
 
                             Log.d("response",response.toString());
@@ -145,8 +137,9 @@ public class MainAppActivityFragment extends Fragment  {
                                 String overview =  object.getString("overview").toString();
                                 String vote_average =  object.getString("vote_average").toString();
                                 String release_date = object.getString("release_date").toString();
+                                String backdrop_path = img_url +  object.getString("backdrop_path").toString();
 
-                                movie = new Movie(original_title, overview, vote_average,release_date,poster_path);
+                                movie = new Movie(original_title, overview, vote_average,release_date,poster_path,backdrop_path);
                                 movieList.add(movie);
 
                             }

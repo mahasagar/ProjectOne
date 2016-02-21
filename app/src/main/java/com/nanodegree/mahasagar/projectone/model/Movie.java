@@ -11,17 +11,18 @@ import java.io.Serializable;
 public class Movie implements Serializable {
 
     private String title, overview, vote_average,release_date;
-    public String img;
+    public String img,backdrop_path;
 
     public Movie() {
     }
-//original_title, overview, vote_average,release_date,poster_path
-    public Movie(String title, String overview, String vote_average,String release_date,String img) {
+    //original_title, overview, vote_average,release_date,poster_path
+    public Movie(String title, String overview, String vote_average,String release_date,String img,String backdrop_path) {
         this.title = title;
         this.overview = overview;
         this.vote_average = vote_average;
         this.release_date=release_date;
         this.img = img;
+        this.backdrop_path = backdrop_path;
     }
 
     public String getImg() {
@@ -64,5 +65,11 @@ public class Movie implements Serializable {
         this.vote_average = vote_average;
     }
 
+    public String getBackdrop_path() {
+        return backdrop_path;
+    }
 
+    public void setBackdrop_path(String backdrop_path) {
+        this.backdrop_path = backdrop_path;
+    }
 }
