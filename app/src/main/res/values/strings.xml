@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ProjectOne</string>
+    <string name="action_settings">Settings</string>
+    <string name="sort_most_popular">Sort by Most Popular</string>
+    <string name="sort_highest_rated">Sort by Highest Rated</string>
+    <string name="show_only_fav">Show Favorites</string>
+    <string name="textSpalsh">Popular Movies</string>
+</resources>
