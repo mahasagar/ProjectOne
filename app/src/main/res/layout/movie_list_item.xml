@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        android:gravity="center"
         android:paddingTop="15dp"
         android:text="Maovie name"
         android:paddingBottom="15dp"
