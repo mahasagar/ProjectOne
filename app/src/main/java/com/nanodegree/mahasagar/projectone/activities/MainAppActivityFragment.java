@@ -79,7 +79,9 @@ public class MainAppActivityFragment extends Fragment  {
             public void onClick(View view, int position) {
                 Movie movie = movieList.get(position);
                 Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
-                intent.putExtra("Movie", movie);
+//                intent.putExtra("Movie", movie);
+                Movie movieToParcel = new Movie(movie.getTitle(), movie.getOverview(), movie.getVote_average(),movie.getRelease_date(),movie.getImg(),movie.getBackdrop_path());
+                intent.putExtra("Movie", movieToParcel);
                 startActivity(intent);
             }
 

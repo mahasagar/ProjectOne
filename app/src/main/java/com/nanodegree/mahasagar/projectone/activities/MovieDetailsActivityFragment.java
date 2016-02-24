@@ -55,7 +55,7 @@ public class MovieDetailsActivityFragment extends Fragment {
 //        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getActivity().getIntent();
-        Movie movie =(Movie)intent.getSerializableExtra("Movie");
+        Movie movie =(Movie)intent.getParcelableExtra("Movie");
 
         title.setText(movie.getTitle().toString());
         release_date.setText(movie.getRelease_date().toString());
