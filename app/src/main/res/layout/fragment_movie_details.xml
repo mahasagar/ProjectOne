@@ -158,6 +158,46 @@
                     />
 
             </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/review_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/trailers_container"
+                android:textColor="@color/TextColorSplash"
+                android:layout_marginEnd="@dimen/margin_large"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginRight="@dimen/margin_large"
+                android:layout_marginStart="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_default"
+                android:paddingTop="@dimen/margin_large"
+                android:text="Reviews"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                />
+            <ScrollView
+                android:id="@+id/reviews_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/review_header"
+                android:layout_marginTop="@dimen/margin_default"
+                android:clipChildren="false"
+                tools:ignore="RtlHardcoded,RtlSymmetry">
+
+                <LinearLayout
+                    android:id="@+id/reviews"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_large"
+                    android:layout_marginLeft="@dimen/margin_large"
+                    android:layout_marginRight="@dimen/margin_large"
+                    android:layout_marginStart="@dimen/margin_large"
+                    android:clipChildren="false"
+                    android:divider="@drawable/default_divider"
+                    android:orientation="vertical"
+                    android:showDividers="middle"
+                    />
+
+            </ScrollView>
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

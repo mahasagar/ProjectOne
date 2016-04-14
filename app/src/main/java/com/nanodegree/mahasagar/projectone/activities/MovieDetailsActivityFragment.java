@@ -20,6 +20,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.nanodegree.mahasagar.projectone.R;
 import com.nanodegree.mahasagar.projectone.common.Constants;
 import com.nanodegree.mahasagar.projectone.model.Movie;
+import com.nanodegree.mahasagar.projectone.model.Reviews;
 import com.nanodegree.mahasagar.projectone.model.Trailer;
 import com.nanodegree.mahasagar.projectone.utilities.VolleySingleton;
 import com.squareup.picasso.Picasso;
@@ -45,8 +46,11 @@ public class MovieDetailsActivityFragment extends Fragment {
     @Bind(R.id.backdrop) ImageView backdrop;
 
     @Bind(R.id.trailers)            ViewGroup trailerLayout;
+    @Bind(R.id.reviews)            ViewGroup reviewLayout;
 
     private List<Trailer> TrailerList = new ArrayList<>();
+    private List<Reviews> ReviewList = new ArrayList<>();
+
     RequestQueue requestQueue;
 
     public MovieDetailsActivityFragment() {
@@ -89,7 +93,63 @@ public class MovieDetailsActivityFragment extends Fragment {
         Picasso.with(view.getContext()).load(movie.getBackdrop_path()).into(backdrop);
 
         prepareTrailerData(movie.getId());
+        prepareReviewData(movie.getId());
         return view;
+    }
+
+
+    private void prepareReviewData(String Id) {
+
+        String URL = Constants.REVIEW_URL +Id+Constants.REVIEW_URL_LAST+ Constants.API_KEY;
+        StringRequest reqList2 = new StringRequest(com.android.volley.Request.Method.GET, URL,new
+                Response.Listener<String>(){
+
+                    @Override
+                    public void onResponse(String response) {
+                        // TODO Auto-generated method stub
+                        Reviews reviewData = null;
+                        try {
+                            JSONArray jarray = new JSONObject(response).getJSONArray("results");
+                            System.out.println("reviews" + jarray.toString());
+                            for (int i = 0; i < jarray.length(); i++) {
+                                JSONObject object = jarray.getJSONObject(i);
+                                String review_content =  object.getString("content").toString();
+                                String review_author = object.getString("author").toString();
+                                reviewData = new Reviews(review_author,review_content);
+                                ReviewList.add(reviewData);
+                            }
+
+                        }catch(Exception e){
+
+                        }
+                        reviewLayout.removeAllViews();
+                        LayoutInflater inflater = getActivity().getLayoutInflater();
+                        int i = 0;
+                        for (Reviews review : ReviewList) {
+                            ViewGroup thumbContainer = (ViewGroup) inflater.inflate(R.layout.review_item_layout, reviewLayout,
+                                    false);
+                            TextView review_author = (TextView)thumbContainer.findViewById(R.id.review_author);
+                            TextView review_content = (TextView)thumbContainer.findViewById(R.id.review_content);
+                            review_author.setText(review.getAuthor().toString());
+                            review_content.setText(review.getContent().toString());
+                            reviewLayout.addView(thumbContainer);
+                            i++;
+                            Toast.makeText(getContext(),"End : "+i,Toast.LENGTH_SHORT).show();
+                        }
+
+                        Toast.makeText(getContext(),"End : ",Toast.LENGTH_SHORT).show();
+                    }
+                },new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // TODO Auto-generated method stub
+
+                Toast.makeText(getContext(),"here error"+error.toString(),Toast.LENGTH_SHORT).show();
+            }
+
+        });
+        requestQueue.add(reqList2);
     }
 
 
