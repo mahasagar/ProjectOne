@@ -80,7 +80,7 @@ public class MainAppActivityFragment extends Fragment  {
                 Movie movie = movieList.get(position);
                 Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
 //                intent.putExtra("Movie", movie);
-                Movie movieToParcel = new Movie(movie.getTitle(), movie.getOverview(), movie.getVote_average(),movie.getRelease_date(),movie.getImg(),movie.getBackdrop_path());
+                Movie movieToParcel = new Movie(movie.getId(),movie.getTitle(), movie.getOverview(), movie.getVote_average(),movie.getRelease_date(),movie.getImg(),movie.getBackdrop_path());
                 intent.putExtra("Movie", movieToParcel);
                 startActivity(intent);
             }
@@ -121,10 +121,12 @@ public class MainAppActivityFragment extends Fragment  {
                         // TODO Auto-generated method stub
                         try {
                             JSONArray jarray = new JSONObject(response).getJSONArray("results");
+                            System.out.println("jarray :"+jarray.toString());
                             Movie movie = null;
                             for (int i = 0; i < jarray.length(); i++) {
 
                                 JSONObject object = jarray.getJSONObject(i);
+                                String id =  object.getString("id").toString();
                                 String original_title = object.getString("original_title").toString();
                                 String poster_path = Constants.IMG_URL + object.getString("poster_path");
                                 String overview =  object.getString("overview").toString();
@@ -132,7 +134,7 @@ public class MainAppActivityFragment extends Fragment  {
                                 String release_date = object.getString("release_date").toString();
                                 String backdrop_path = Constants.IMG_URL +  object.getString("backdrop_path").toString();
 
-                                movie = new Movie(original_title, overview, vote_average,release_date,poster_path,backdrop_path);
+                                movie = new Movie(id,original_title, overview, vote_average,release_date,poster_path,backdrop_path);
                                 movieList.add(movie);
 
                             }

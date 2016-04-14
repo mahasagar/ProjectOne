@@ -12,14 +12,13 @@ import com.nanodegree.mahasagar.projectone.R;
 
 public class MainAppActivity extends AppCompatActivity {
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_app);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
     }
 
 
@@ -29,5 +28,4 @@ public class MainAppActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main_app, menu);
         return true;
     }
-
 }

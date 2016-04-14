@@ -123,6 +123,41 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 tools:text=" The Overview of movie"
                 />
+            <TextView
+                android:id="@+id/trailers_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/overview"
+                android:textColor="@color/TextColorSplash"
+                android:layout_marginEnd="@dimen/margin_large"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginRight="@dimen/margin_large"
+                android:layout_marginStart="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_default"
+                android:paddingTop="@dimen/margin_large"
+                android:text="Trailer"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                />
+            <HorizontalScrollView
+                android:id="@+id/trailers_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/trailers_header"
+                android:layout_marginTop="@dimen/margin_default"
+                android:clipChildren="false"
+                tools:ignore="RtlHardcoded,RtlSymmetry">
+
+                <LinearLayout
+                    android:id="@+id/trailers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clipChildren="false"
+                    android:divider="@drawable/default_divider"
+                    android:orientation="horizontal"
+                    android:showDividers="middle"
+                    />
+
+            </HorizontalScrollView>
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>
