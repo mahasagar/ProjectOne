@@ -24,7 +24,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mActionBarToolbar = (Toolbar) findViewById(R.id.toolbarMovieDetails);
-//        setSupportActionBar(mActionBarToolbar);
         setSupportActionBar(mActionBarToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);

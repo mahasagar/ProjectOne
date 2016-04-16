@@ -15,18 +15,21 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.nanodegree.mahasagar.projectone.adapters.FavMovieAdapter;
 import com.nanodegree.mahasagar.projectone.common.Constants;
 import com.nanodegree.mahasagar.projectone.model.Movie;
 import com.nanodegree.mahasagar.projectone.adapters.MoviesAdapter;
 import com.nanodegree.mahasagar.projectone.utilities.MyApplication;
 import com.nanodegree.mahasagar.projectone.R;
 import com.nanodegree.mahasagar.projectone.utilities.DividerItemDecoration;
+import com.nanodegree.mahasagar.projectone.utilities.SharedPreference;
 import com.nanodegree.mahasagar.projectone.utilities.VolleySingleton;
 
 import org.json.JSONArray;
@@ -45,6 +48,10 @@ public class MainAppActivityFragment extends Fragment  {
 
     @Bind(R.id.recycler_view) RecyclerView recyclerView;
     private MoviesAdapter mAdapter;
+    private FavMovieAdapter mFavAdapter;
+
+
+    SharedPreference sharedPreference;
 
     RequestQueue requestQueue;
     public MainAppActivityFragment() {
@@ -57,10 +64,13 @@ public class MainAppActivityFragment extends Fragment  {
 
         View view =  inflater.inflate(R.layout.fragment_main_app, container, false);
         setHasOptionsMenu(true);
+        sharedPreference = new SharedPreference();
         requestQueue = VolleySingleton.getInstance().getREquestQueue();
         ButterKnife.bind(this, view);
 
         mAdapter = new MoviesAdapter(movieList);
+        mFavAdapter = new FavMovieAdapter(movieList);
+
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -79,9 +89,14 @@ public class MainAppActivityFragment extends Fragment  {
             public void onClick(View view, int position) {
                 Movie movie = movieList.get(position);
                 Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
-//                intent.putExtra("Movie", movie);
-                Movie movieToParcel = new Movie(movie.getId(),movie.getTitle(), movie.getOverview(), movie.getVote_average(),movie.getRelease_date(),movie.getImg(),movie.getBackdrop_path());
-                intent.putExtra("Movie", movieToParcel);
+//
+                if (sharedPreference.checkFavoriteItem(movie, getContext())) {
+                    Movie movieToParcel = new Movie(movie.getId(),movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(), "", "");
+                    intent.putExtra("Movie", movieToParcel);
+                }else{
+                    Movie movieToParcel = new Movie(movie.getId(),movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(),movie.getImg(), movie.getBackdrop_path());
+                    intent.putExtra("Movie", movieToParcel);
+                }
                 startActivity(intent);
             }
 
@@ -105,13 +120,47 @@ public class MainAppActivityFragment extends Fragment  {
             case R.id.sort_most_popular:
                 prepareMovieData(Constants.URL_POPULARITY);
                 return true;
+            case R.id.sort_fav:
+                if(sharedPreference.getCountFav(getContext())) {
+                    prepareFavMovieData();
+                }else{
+                    Toast.makeText(getContext(), "There are No Favourites Movies", Toast.LENGTH_SHORT).show();
+                }
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void prepareFavMovieData() {
+        movieList.clear();
+        movieList = sharedPreference.loadFavorites(getActivity());
+        restoreRecycleView();
+        mFavAdapter = new FavMovieAdapter(movieList);
+        restoreRecycleView();
+        recyclerView.setAdapter(mFavAdapter);
+        mFavAdapter.notifyDataSetChanged();
+    }
+
+
+    private void restoreRecycleView() {
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+
+        RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
+        itemAnimator.setAddDuration(1000);
+        itemAnimator.setRemoveDuration(1000);
+        recyclerView.setItemAnimator(itemAnimator);
+
     }
 
 
     private void prepareMovieData(String Url) {
 
+        mAdapter = new MoviesAdapter(movieList);
+        restoreRecycleView();
         movieList.clear();
         StringRequest reqList2 = new StringRequest(com.android.volley.Request.Method.GET, Url,new
                 Response.Listener<String>(){
@@ -121,7 +170,6 @@ public class MainAppActivityFragment extends Fragment  {
                         // TODO Auto-generated method stub
                         try {
                             JSONArray jarray = new JSONObject(response).getJSONArray("results");
-                            System.out.println("jarray :"+jarray.toString());
                             Movie movie = null;
                             for (int i = 0; i < jarray.length(); i++) {
 

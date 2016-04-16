@@ -26,4 +26,14 @@
         <include layout="@layout/content_movie_app" />
 
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/select_favorite"
+        android:layout_width="@dimen/fab_size"
+        android:layout_height="@dimen/fab_size"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/margin_fab"
+        android:scaleX="0"
+        android:scaleY="0"
+        android:src="@drawable/ic_arrow_back_white"/>
+
 </android.support.design.widget.CoordinatorLayout>

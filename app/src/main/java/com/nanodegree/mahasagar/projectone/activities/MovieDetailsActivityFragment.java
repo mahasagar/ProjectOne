@@ -2,9 +2,15 @@ package com.nanodegree.mahasagar.projectone.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,19 +28,22 @@ import com.nanodegree.mahasagar.projectone.common.Constants;
 import com.nanodegree.mahasagar.projectone.model.Movie;
 import com.nanodegree.mahasagar.projectone.model.Reviews;
 import com.nanodegree.mahasagar.projectone.model.Trailer;
+import com.nanodegree.mahasagar.projectone.utilities.SharedPreference;
 import com.nanodegree.mahasagar.projectone.utilities.VolleySingleton;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
+import butterknife.BindDrawable;
 import butterknife.ButterKnife;
 
-public class MovieDetailsActivityFragment extends Fragment {
+public class MovieDetailsActivityFragment extends Fragment implements View.OnClickListener {
 
     static android.support.v7.widget.Toolbar toolbarMovie;
     Activity activity;
@@ -48,13 +57,23 @@ public class MovieDetailsActivityFragment extends Fragment {
     @Bind(R.id.trailers)            ViewGroup trailerLayout;
     @Bind(R.id.reviews)            ViewGroup reviewLayout;
 
+    @Bind(R.id.fabButton)
+    FloatingActionButton mFavoriteBtn;
+
+    @BindDrawable(R.drawable.fav)
+    Drawable fav;
+    @BindDrawable(R.drawable.select_fav)  Drawable not_fav;
+
+
     private List<Trailer> TrailerList = new ArrayList<>();
     private List<Reviews> ReviewList = new ArrayList<>();
 
     RequestQueue requestQueue;
+    SharedPreference sharedPreference;
+    Movie movie;
 
     public MovieDetailsActivityFragment() {
-
+        sharedPreference = new SharedPreference();
     }
 
     public static MovieDetailsActivityFragment newInstance(Activity act, android.support.v7.widget.Toolbar toolbar) {
@@ -78,25 +97,78 @@ public class MovieDetailsActivityFragment extends Fragment {
 
         }
         Intent intent = getActivity().getIntent();
-        Movie movie =(Movie)intent.getParcelableExtra("Movie");
-        System.out.println("movie :" + movie.toString());
+        movie =(Movie)intent.getParcelableExtra("Movie");
 
         title.setText(movie.getTitle().toString());
         getActivity().setTitle(movie.getTitle().toString());
 
 
-        Toast.makeText(getContext(), "id : " + movie.getId(), Toast.LENGTH_SHORT).show();
         release_date.setText(movie.getRelease_date().toString());
         overview.setText(movie.getOverview().toString());
         rating.setText(movie.getVote_average().toString() + "/");
-        Picasso.with(view.getContext()).load(movie.getImg()).into(poster);
-        Picasso.with(view.getContext()).load(movie.getBackdrop_path()).into(backdrop);
+        if (sharedPreference.checkFavoriteItem(movie, getContext())) {
+            movie = sharedPreference.getMovieObject(movie.getTitle(), getContext());
+            byte[] decodedString = Base64.decode(movie.getImg(), Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            poster.setImageBitmap(decodedByte);
 
+            byte[] decodedString_backdrop = Base64.decode(movie.getBackdrop_path(), Base64.DEFAULT);
+            Bitmap decodedByte_backdrop = BitmapFactory.decodeByteArray(decodedString_backdrop, 0, decodedString_backdrop.length);
+            backdrop.setImageBitmap(decodedByte_backdrop);
+        } else {
+            Picasso.with(view.getContext()).load(movie.getImg()).into(poster);
+            Picasso.with(view.getContext()).load(movie.getBackdrop_path()).into(backdrop);
+        }
         prepareTrailerData(movie.getId());
         prepareReviewData(movie.getId());
+
+        mFavoriteBtn.setOnClickListener(this);
+        updateFabButton();
+
         return view;
     }
 
+    private void updateFabButton() {
+        if (sharedPreference.checkFavoriteItem(movie, getContext())) {
+            Toast.makeText(getContext(), movie.getTitle()+" is Fav", Toast.LENGTH_SHORT).show();
+            mFavoriteBtn.setImageDrawable(fav);
+        } else {
+            mFavoriteBtn.setImageDrawable(not_fav);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.fabButton ) {
+            if(!sharedPreference.checkFavoriteItem(movie, getContext())) {
+                Bitmap bitmap = ((BitmapDrawable) poster.getDrawable()).getBitmap();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+                String encodedString = Base64.encodeToString(byteArray, Base64.DEFAULT);
+                String img_str = Base64.encodeToString(byteArray, 0);
+
+
+                Bitmap bitmap_backPoster = ((BitmapDrawable) backdrop.getDrawable()).getBitmap();
+                ByteArrayOutputStream stream_backPoster = new ByteArrayOutputStream();
+                bitmap_backPoster.compress(Bitmap.CompressFormat.PNG, 100, stream_backPoster);
+                byte[] byteArray_backPoster = stream_backPoster.toByteArray();
+                String encodedString_backPoster = Base64.encodeToString(byteArray_backPoster, Base64.DEFAULT);
+
+                movie.setImg(img_str);
+                movie.setBackdrop_path(encodedString_backPoster);
+
+
+                sharedPreference.addFavorite(v.getContext(), movie);
+                ArrayList<Movie> favourites = sharedPreference.loadFavorites(getActivity());
+                updateFabButton();
+            }else{
+                sharedPreference.removeFavorite(getContext(),movie);
+                updateFabButton();
+
+            }
+        }
+    }
 
     private void prepareReviewData(String Id) {
 
@@ -110,7 +182,6 @@ public class MovieDetailsActivityFragment extends Fragment {
                         Reviews reviewData = null;
                         try {
                             JSONArray jarray = new JSONObject(response).getJSONArray("results");
-                            System.out.println("reviews" + jarray.toString());
                             for (int i = 0; i < jarray.length(); i++) {
                                 JSONObject object = jarray.getJSONObject(i);
                                 String review_content =  object.getString("content").toString();
@@ -124,7 +195,6 @@ public class MovieDetailsActivityFragment extends Fragment {
                         }
                         reviewLayout.removeAllViews();
                         LayoutInflater inflater = getActivity().getLayoutInflater();
-                        int i = 0;
                         for (Reviews review : ReviewList) {
                             ViewGroup thumbContainer = (ViewGroup) inflater.inflate(R.layout.review_item_layout, reviewLayout,
                                     false);
@@ -133,11 +203,8 @@ public class MovieDetailsActivityFragment extends Fragment {
                             review_author.setText(review.getAuthor().toString());
                             review_content.setText(review.getContent().toString());
                             reviewLayout.addView(thumbContainer);
-                            i++;
-                            Toast.makeText(getContext(),"End : "+i,Toast.LENGTH_SHORT).show();
                         }
 
-                        Toast.makeText(getContext(),"End : ",Toast.LENGTH_SHORT).show();
                     }
                 },new Response.ErrorListener() {
 
@@ -145,7 +212,6 @@ public class MovieDetailsActivityFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 // TODO Auto-generated method stub
 
-                Toast.makeText(getContext(),"here error"+error.toString(),Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -165,15 +231,12 @@ public class MovieDetailsActivityFragment extends Fragment {
                         Trailer trailerData = null;
                         try {
                             JSONArray jarray = new JSONObject(response).getJSONArray("results");
-                            System.out.println("here" + jarray.toString());
                             for (int i = 0; i < jarray.length(); i++) {
                                 JSONObject object = jarray.getJSONObject(i);
                                 String youtube_path = Constants.YOUTUBE_THUMBNAIL_URL +  object.getString("key").toString() + Constants.YOUTUBE_THUMBNAIL_URL_LAST;
-                                System.out.println("new_Path" + youtube_path.toString());
                                 String youtube_link =Constants.YOUTUBE_VIDEO_LINK+object.getString("key").toString();
                                 trailerData = new Trailer(youtube_path,youtube_link);
                                 TrailerList.add(trailerData);
-                                System.out.println("TrailerList size :" + TrailerList.size());
 
                             }
 
@@ -183,7 +246,6 @@ public class MovieDetailsActivityFragment extends Fragment {
                         trailerLayout.removeAllViews();
                         LayoutInflater inflater = getActivity().getLayoutInflater();
                         Picasso picasso = Picasso.with(getActivity());
-                        int i =0 ;
                         for (Trailer trailer : TrailerList) {
                             ViewGroup thumbContainer = (ViewGroup) inflater.inflate(R.layout.trailer_layout, trailerLayout,
                                     false);
@@ -202,8 +264,6 @@ public class MovieDetailsActivityFragment extends Fragment {
                                     .centerCrop()
                                     .into(thumbView);
                             trailerLayout.addView(thumbContainer);
-                            Toast.makeText(getContext(),"End : "+i,Toast.LENGTH_SHORT).show();
-                            i++;
 
                         }
                     }
@@ -213,11 +273,11 @@ public class MovieDetailsActivityFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 // TODO Auto-generated method stub
 
-                Toast.makeText(getContext(),"here error"+error.toString(),Toast.LENGTH_SHORT).show();
             }
 
         });
         requestQueue.add(reqList2);
     }
+
 
 }

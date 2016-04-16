@@ -5,4 +5,6 @@
     <string name="sort_highest_rated">Sort by Highest Rated</string>
     <string name="textSpalsh">Popular Movies</string>
     <string name="ratings">10</string>
+    <string name="sort_fav">Sort By Fav</string>
+
 </resources>
