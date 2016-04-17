@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -50,6 +51,7 @@ public class MainAppActivityFragment extends Fragment  {
     private MoviesAdapter mAdapter;
     private FavMovieAdapter mFavAdapter;
 
+    int mPosition = 0;
 
     SharedPreference sharedPreference;
 
@@ -94,16 +96,45 @@ public class MainAppActivityFragment extends Fragment  {
             @Override
             public void onClick(View view, int position) {
                 Movie movie = movieList.get(position);
+                Movie movieToParcel;
+                mPosition = position;
                 Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
-//
                 if (sharedPreference.checkFavoriteItem(movie, getContext())) {
-                    Movie movieToParcel = new Movie(movie.getId(),movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(), "", "");
+                    movieToParcel= new Movie(movie.getId(),movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(), "", "");
                     intent.putExtra("Movie", movieToParcel);
                 }else{
-                    Movie movieToParcel = new Movie(movie.getId(),movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(),movie.getImg(), movie.getBackdrop_path());
+                    movieToParcel = new Movie(movie.getId(),movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(),movie.getImg(), movie.getBackdrop_path());
                     intent.putExtra("Movie", movieToParcel);
                 }
-                startActivity(intent);
+
+                if (((MainAppActivity)getActivity()).isItTab()) {
+                    Toast.makeText(getContext(),"tab : "+((MainAppActivity)getActivity()).isItTab(),Toast.LENGTH_SHORT).show();
+                    Fragment detailsFragment = MovieDetailsActivityFragment.newInstance( getActivity(),null);
+                    Bundle arguments = new Bundle();
+                    arguments.putParcelable("SelectedMovie",intent.getData() );
+
+                    detailsFragment.setArguments(arguments);
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.fragment_container, detailsFragment,
+                                    MovieDetailsActivityFragment.class.getSimpleName())
+                            .commit();
+
+                } else {
+                    intent = new Intent(getActivity(), MovieDetailsActivity.class);
+                    if (sharedPreference.checkFavoriteItem(movie, getContext())) {
+                        movieToParcel= new Movie(movie.getId(),movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(), "", "");
+                        intent.putExtra("Movie", movieToParcel);
+                    }else{
+                        movieToParcel = new Movie(movie.getId(),movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(),movie.getImg(), movie.getBackdrop_path());
+                        intent.putExtra("Movie", movieToParcel);
+                    }
+
+                    startActivity(intent);
+                }
+
+                Toast.makeText(getContext(),"value : " + movie.getId(),Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
@@ -112,11 +143,22 @@ public class MainAppActivityFragment extends Fragment  {
             }
         }));
         prepareMovieData(Constants.URL_POPULARITY);
+        if (savedInstanceState != null && savedInstanceState.containsKey("Selected")) {
+            // The listview probably hasn't even been populated yet.  Actually perform the
+            // swapout in onLoadFinished.
+            mPosition = savedInstanceState.getInt("Selected");
+        }
         return view;
 
     }
 
-
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mPosition != ListView.INVALID_POSITION) {
+            outState.putInt("Selected", mPosition);
+        }
+        super.onSaveInstanceState(outState);
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

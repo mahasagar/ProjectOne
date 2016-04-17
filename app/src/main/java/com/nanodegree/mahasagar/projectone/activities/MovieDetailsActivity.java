@@ -42,6 +42,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     .add(R.id.fragment_container, detailsFragment,
                             MovieDetailsActivityFragment.class.getSimpleName())
                     .commit();
+
         }
     }
 
