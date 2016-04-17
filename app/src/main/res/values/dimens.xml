@@ -34,5 +34,6 @@
     <dimen name="textSplashDimen">30dp</dimen>
     <dimen name="marginFabMenu">88dp</dimen>
     <dimen name="backPosterHieght">200dp</dimen>
+    <bool name="isTab">false</bool>
 
 </resources>

@@ -7,11 +7,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
@@ -88,6 +90,7 @@ public class MovieDetailsActivityFragment extends Fragment implements View.OnCli
 
         View view =  inflater.inflate(R.layout.fragment_movie_details, container, false);
         ButterKnife.bind(this, view);
+        setHasOptionsMenu(true);
         requestQueue = VolleySingleton.getInstance().getREquestQueue();
 
         try {
@@ -126,6 +129,32 @@ public class MovieDetailsActivityFragment extends Fragment implements View.OnCli
         updateFabButton();
 
         return view;
+    }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.share_it:
+
+//                Video firstTrailer = Movie.getTrailers(mMovie).get(0);
+//                String subject = mMovie.getTitle() + " - " + firstTrailer.getName();
+//                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+//                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+//                    //noinspection deprecation
+//                    shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+//                } else {
+//                    shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+//                }
+//                shareIntent.setType("text/plain");
+//                shareIntent.putExtra(Intent.EXTRA_TEXT, Video.getUrl(firstTrailer));
+//                shareIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+//                startActivity(Intent.createChooser(shareIntent, getString(R.string.share_trailer)));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void updateFabButton() {

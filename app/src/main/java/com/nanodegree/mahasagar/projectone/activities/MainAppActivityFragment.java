@@ -70,6 +70,12 @@ public class MainAppActivityFragment extends Fragment  {
 
         mAdapter = new MoviesAdapter(movieList);
         mFavAdapter = new FavMovieAdapter(movieList);
+        if(getResources().getBoolean(R.bool.isTab)) {
+            Toast.makeText(getContext(),"is tabl : "+getResources().getBoolean(R.bool.isTab),Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(),"is tabl : "+getResources().getBoolean(R.bool.isTab),Toast.LENGTH_SHORT).show();
+
+        }
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
