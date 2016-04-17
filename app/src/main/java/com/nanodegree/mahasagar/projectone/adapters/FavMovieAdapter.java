@@ -53,7 +53,6 @@ public class FavMovieAdapter extends RecyclerView.Adapter<FavMovieAdapter.MyView
         byte[] decodedString = Base64.decode(movie.getImg(), Base64.DEFAULT);
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         holder.itemImage.setImageBitmap(decodedByte);
-//        Picasso.with(v.getContext()).load(movie.getImg()).into(holder.itemImage);
     }
 
     @Override

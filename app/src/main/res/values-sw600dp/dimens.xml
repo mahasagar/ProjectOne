@@ -1,0 +1,7 @@
+<resources>
+
+    <dimen name="backPosterHieght">200dp</dimen>
+    <dimen name="backPosterWidth">200dp</dimen>
+    <bool name="isTab">false</bool>
+
+</resources>

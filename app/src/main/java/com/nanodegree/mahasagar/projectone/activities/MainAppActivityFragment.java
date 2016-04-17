@@ -1,5 +1,6 @@
 package com.nanodegree.mahasagar.projectone.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
@@ -45,8 +46,8 @@ import butterknife.ButterKnife;
 
 public class MainAppActivityFragment extends Fragment  {
 
-    private List<Movie> movieList = new ArrayList<>();
 
+    private List<Movie> movieList = new ArrayList<>();
     @Bind(R.id.recycler_view) RecyclerView recyclerView;
     private MoviesAdapter mAdapter;
     private FavMovieAdapter mFavAdapter;
@@ -54,7 +55,6 @@ public class MainAppActivityFragment extends Fragment  {
     int mPosition = 0;
 
     SharedPreference sharedPreference;
-
     RequestQueue requestQueue;
     public MainAppActivityFragment() {
 
@@ -72,12 +72,6 @@ public class MainAppActivityFragment extends Fragment  {
 
         mAdapter = new MoviesAdapter(movieList);
         mFavAdapter = new FavMovieAdapter(movieList);
-        if(getResources().getBoolean(R.bool.isTab)) {
-            Toast.makeText(getContext(),"is tabl : "+getResources().getBoolean(R.bool.isTab),Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getContext(),"is tabl : "+getResources().getBoolean(R.bool.isTab),Toast.LENGTH_SHORT).show();
-
-        }
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -99,19 +93,18 @@ public class MainAppActivityFragment extends Fragment  {
                 Movie movieToParcel;
                 mPosition = position;
                 Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
-                if (sharedPreference.checkFavoriteItem(movie, getContext())) {
-                    movieToParcel= new Movie(movie.getId(),movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(), "", "");
-                    intent.putExtra("Movie", movieToParcel);
-                }else{
-                    movieToParcel = new Movie(movie.getId(),movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(),movie.getImg(), movie.getBackdrop_path());
-                    intent.putExtra("Movie", movieToParcel);
-                }
 
-                if (((MainAppActivity)getActivity()).isItTab()) {
-                    Toast.makeText(getContext(),"tab : "+((MainAppActivity)getActivity()).isItTab(),Toast.LENGTH_SHORT).show();
-                    Fragment detailsFragment = MovieDetailsActivityFragment.newInstance( getActivity(),null);
+                if (((MainAppActivity) getActivity()).isItTab()) {
+                    if (sharedPreference.checkFavoriteItem(movie, getContext())) {
+                        movieToParcel = new Movie(movie.getId(), movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(), "", "");
+
+                    } else {
+                        movieToParcel = new Movie(movie.getId(), movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(), movie.getImg(), movie.getBackdrop_path());
+
+                    }
+                    Fragment detailsFragment = MovieDetailsActivityFragment.newInstance(getActivity(), null);
                     Bundle arguments = new Bundle();
-                    arguments.putParcelable("SelectedMovie",intent.getData() );
+                    arguments.putParcelable("SelectedMovie", movieToParcel);
 
                     detailsFragment.setArguments(arguments);
                     getActivity().getSupportFragmentManager()
@@ -121,20 +114,16 @@ public class MainAppActivityFragment extends Fragment  {
                             .commit();
 
                 } else {
-                    intent = new Intent(getActivity(), MovieDetailsActivity.class);
                     if (sharedPreference.checkFavoriteItem(movie, getContext())) {
-                        movieToParcel= new Movie(movie.getId(),movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(), "", "");
+                        movieToParcel = new Movie(movie.getId(), movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(), "", "");
                         intent.putExtra("Movie", movieToParcel);
-                    }else{
-                        movieToParcel = new Movie(movie.getId(),movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(),movie.getImg(), movie.getBackdrop_path());
+                    } else {
+                        movieToParcel = new Movie(movie.getId(), movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(), movie.getImg(), movie.getBackdrop_path());
                         intent.putExtra("Movie", movieToParcel);
                     }
-
+                    intent.putExtra("Movie", movieToParcel);
                     startActivity(intent);
                 }
-
-                Toast.makeText(getContext(),"value : " + movie.getId(),Toast.LENGTH_SHORT).show();
-
             }
 
             @Override
@@ -142,13 +131,45 @@ public class MainAppActivityFragment extends Fragment  {
 
             }
         }));
+
         prepareMovieData(Constants.URL_POPULARITY);
         if (savedInstanceState != null && savedInstanceState.containsKey("Selected")) {
             // The listview probably hasn't even been populated yet.  Actually perform the
             // swapout in onLoadFinished.
             mPosition = savedInstanceState.getInt("Selected");
+            Toast.makeText(getContext(), "Selected: " + mPosition, Toast.LENGTH_SHORT).show();
+
         }
+
         return view;
+
+    }
+
+    public void gettabletViewData(){
+        Movie movie = movieList.get(0);
+        Movie movieToParcel =null;
+        if (((MainAppActivity)getActivity()).isItTab() && movieList.size() > 0) {
+
+            if (sharedPreference.checkFavoriteItem(movie, getContext())) {
+                movieToParcel= new Movie(movie.getId(),movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(), "", "");
+            }else{
+                movieToParcel = new Movie(movie.getId(),movie.getTitle(), movie.getOverview(), movie.getVote_average(), movie.getRelease_date(),movie.getImg(), movie.getBackdrop_path());
+            }
+            Fragment detailsFragment = MovieDetailsActivityFragment.newInstance( getActivity(),null);
+            Bundle arguments = new Bundle();
+            arguments.putParcelable("SelectedMovie", movieToParcel);
+
+            detailsFragment.setArguments(arguments);
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragment_container, detailsFragment,
+                            MovieDetailsActivityFragment.class.getSimpleName())
+                    .commit();
+
+
+        }else{
+
+        }
 
     }
 
@@ -184,9 +205,10 @@ public class MainAppActivityFragment extends Fragment  {
         movieList = sharedPreference.loadFavorites(getActivity());
         restoreRecycleView();
         mFavAdapter = new FavMovieAdapter(movieList);
-        restoreRecycleView();
         recyclerView.setAdapter(mFavAdapter);
+        restoreRecycleView();
         mFavAdapter.notifyDataSetChanged();
+        gettabletViewData();
     }
 
 
@@ -208,7 +230,6 @@ public class MainAppActivityFragment extends Fragment  {
     private void prepareMovieData(String Url) {
 
         mAdapter = new MoviesAdapter(movieList);
-        restoreRecycleView();
         movieList.clear();
         StringRequest reqList2 = new StringRequest(com.android.volley.Request.Method.GET, Url,new
                 Response.Listener<String>(){
@@ -235,6 +256,7 @@ public class MainAppActivityFragment extends Fragment  {
 
                             }
                             recyclerView.setAdapter(mAdapter);
+                            gettabletViewData();
                         }catch(Exception e){
 
                         }
@@ -249,6 +271,7 @@ public class MainAppActivityFragment extends Fragment  {
 
         });
         requestQueue.add(reqList2);
+        restoreRecycleView();
         mAdapter.notifyDataSetChanged();
     }
 

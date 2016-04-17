@@ -92,49 +92,47 @@ public class MovieDetailsActivityFragment extends Fragment implements View.OnCli
         ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
         requestQueue = VolleySingleton.getInstance().getREquestQueue();
-        if (((MainAppActivity)getActivity()).isItTab()) {
+        if (MainAppActivity.isItTab()) {
             Bundle arguments = getArguments();
             if (arguments != null) {
+
                 movie =(Movie) arguments.getParcelable("SelectedMovie");
             }
-//            Toast.makeText(getContext(),"movie : "+movie.getTitle(),Toast.LENGTH_SHORT).show();
         }else{
-            Toast.makeText(getContext(),"simple details : "+((MainAppActivity)getActivity()).isItTab(),Toast.LENGTH_SHORT).show();
             Intent intent = getActivity().getIntent();
             movie =(Movie)intent.getParcelableExtra("Movie");
         }
         try {
-
             getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
         }catch(Exception e){
 
         }
 
-//        title.setText(movie.getTitle().toString());
-//        getActivity().setTitle(movie.getTitle().toString());
-//
-//
-//        release_date.setText(movie.getRelease_date().toString());
-//        overview.setText(movie.getOverview().toString());
-//        rating.setText(movie.getVote_average().toString() + "/");
-//        if (sharedPreference.checkFavoriteItem(movie, getContext())) {
-//            movie = sharedPreference.getMovieObject(movie.getTitle(), getContext());
-//            byte[] decodedString = Base64.decode(movie.getImg(), Base64.DEFAULT);
-//            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-//            poster.setImageBitmap(decodedByte);
-//
-//            byte[] decodedString_backdrop = Base64.decode(movie.getBackdrop_path(), Base64.DEFAULT);
-//            Bitmap decodedByte_backdrop = BitmapFactory.decodeByteArray(decodedString_backdrop, 0, decodedString_backdrop.length);
-//            backdrop.setImageBitmap(decodedByte_backdrop);
-//        } else {
-//            Picasso.with(view.getContext()).load(movie.getImg()).into(poster);
-//            Picasso.with(view.getContext()).load(movie.getBackdrop_path()).into(backdrop);
-//        }
-//        prepareTrailerData(movie.getId());
-//        prepareReviewData(movie.getId());
-//
-//        mFavoriteBtn.setOnClickListener(this);
-//        updateFabButton();
+        title.setText(movie.getTitle().toString());
+        getActivity().setTitle(movie.getTitle().toString());
+
+
+        release_date.setText(movie.getRelease_date().toString());
+        overview.setText(movie.getOverview().toString());
+        rating.setText(movie.getVote_average().toString() + "/");
+        if (sharedPreference.checkFavoriteItem(movie, getContext())) {
+            movie = sharedPreference.getMovieObject(movie.getTitle(), getContext());
+            byte[] decodedString = Base64.decode(movie.getImg(), Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            poster.setImageBitmap(decodedByte);
+
+            byte[] decodedString_backdrop = Base64.decode(movie.getBackdrop_path(), Base64.DEFAULT);
+            Bitmap decodedByte_backdrop = BitmapFactory.decodeByteArray(decodedString_backdrop, 0, decodedString_backdrop.length);
+            backdrop.setImageBitmap(decodedByte_backdrop);
+        } else {
+            Picasso.with(view.getContext()).load(movie.getImg()).into(poster);
+            Picasso.with(view.getContext()).load(movie.getBackdrop_path()).into(backdrop);
+        }
+        prepareTrailerData(movie.getId());
+        prepareReviewData(movie.getId());
+
+        mFavoriteBtn.setOnClickListener(this);
+        updateFabButton();
 
         return view;
     }
@@ -146,19 +144,6 @@ public class MovieDetailsActivityFragment extends Fragment implements View.OnCli
         switch (item.getItemId()) {
             case R.id.share_it:
 
-//                Video firstTrailer = Movie.getTrailers(mMovie).get(0);
-//                String subject = mMovie.getTitle() + " - " + firstTrailer.getName();
-//                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-//                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-//                    //noinspection deprecation
-//                    shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-//                } else {
-//                    shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-//                }
-//                shareIntent.setType("text/plain");
-//                shareIntent.putExtra(Intent.EXTRA_TEXT, Video.getUrl(firstTrailer));
-//                shareIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-//                startActivity(Intent.createChooser(shareIntent, getString(R.string.share_trailer)));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -184,7 +169,6 @@ public class MovieDetailsActivityFragment extends Fragment implements View.OnCli
                 byte[] byteArray = stream.toByteArray();
                 String encodedString = Base64.encodeToString(byteArray, Base64.DEFAULT);
                 String img_str = Base64.encodeToString(byteArray, 0);
-
 
                 Bitmap bitmap_backPoster = ((BitmapDrawable) backdrop.getDrawable()).getBitmap();
                 ByteArrayOutputStream stream_backPoster = new ByteArrayOutputStream();
