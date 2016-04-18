@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.nanodegree.mahasagar.projectone.R;
+import com.nanodegree.mahasagar.projectone.utilities.Common;
 
 public class MainAppActivity extends AppCompatActivity {
 
@@ -26,7 +27,6 @@ public class MainAppActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main_app);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (findViewById(R.id.fragment_container) != null) {
